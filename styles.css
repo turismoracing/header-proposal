@@ -6,8 +6,8 @@
 
 body {
     position: relative;
-    /*user-select: none;*/
-    /*overflow-x: hidden;*/
+    user-select: none;
+    overflow-x: hidden;
 }
 
 .container {
@@ -61,8 +61,7 @@ a {
 #menu {
     width: fit-content;
     position: absolute;
-    /*right: 0;*/
-    transition: translate 2s;
+    right: 0;
     overflow: hidden;
 }
 

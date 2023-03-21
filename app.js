@@ -1,154 +1,109 @@
-let burger = document.getElementById("burger");
-let menu = document.getElementById("menu");
+// Hiding/showing menu on BIG screens.
+let burgerIcon = document.getElementById("burger");
+let hidingMenu = document.getElementById("menu");
 
-let validator = -1;
+burgerIcon.addEventListener("click", hideFunc);
 
-burger.addEventListener("click", () => {
-    if (smallScreens.matches) return;
-    validator *= -1;
+function hideFunc() {
+    if (smallScreen.matches) return;
 
-    if (validator === 1) {
-        menu.classList.toggle("hidden");
-
+    if (hidingMenu.classList.contains("hidden")) {
+        hidingMenu.classList.toggle("hidden"); 
         let menuRect = menu.getBoundingClientRect();
-        menu.style.top = "";
-        menu.style.right = `-${menuRect.width}px`;
+
+        hidingMenu.style.width = "fit-content";
+        
+        const animOptions = {
+            duration: 1000,
+            fill: "forwards"
+        };
 
         const menuFramesIn = {
-            transform: [`translate(-${menuRect.width}px)`],
+            transform: [`translateX(${menuRect.width}px)`, `translateX(0)`],
             opacity: [0, 1],
+            easing: "ease-out"
+        };
+
+        menu.animate(menuFramesIn, animOptions);
+
+    } else if (!hidingMenu.classList.contains("hidden")) {
+        let menuRect = menu.getBoundingClientRect();
+        
+        const animOptions = {
+            duration: 1000,
+        };
+
+        const menuFramesOut = {
+            transform: [`translateX(0)`, `translateX(${menuRect.width}px)`],
+            opacity: [1, 0],
+            easing: "ease-in"
+        };
+
+        menu.animate(menuFramesOut, animOptions);
+        setTimeout( () => menu.classList.toggle("hidden"), 1000 );
+    }
+}
+
+
+// Hiding/showing the default links on the menu.
+const smallScreen = window.matchMedia("(max-width: 810px)");
+let headerList = document.getElementById("list");
+const headerListLength = headerList.children.length;
+
+window.addEventListener("resize", relocating);
+relocating();
+
+function relocating() {
+    if (smallScreen.matches && Array.from(headerList.children).length > 1) {
+        for (let i = headerListLength - 2; i >= 0; i--) {
+            hidingMenu.firstElementChild.prepend(Array.from(headerList.children)[i]);
+        }
+    } else if (!smallScreen.matches && Array.from(headerList.children).length <= 1) {
+        for (let i = headerListLength - 2; i >= 0; i--) {
+            headerList.prepend(Array.from(hidingMenu.firstElementChild.children)[i]);
+        }
+    }
+}
+
+
+// Hiding/showing menu on SMALL screens.
+burgerIcon.addEventListener("click", hideSmallFunc);
+
+function hideSmallFunc() {
+    if (!smallScreen.matches) return;
+
+    if (hidingMenu.classList.contains("hidden")) {
+        hidingMenu.classList.toggle("hidden");
+
+        let hidingMenuRect = hidingMenu.getBoundingClientRect();
+
+        hidingMenu.style.width = "100vw";
+
+        const menuFramesIn = {
+            height: [0, `${hidingMenuRect.height}px`],
             easing: "ease-out"
         }
 
         const animOptions = {
             duration: 1000,
-            fill: "forwards",
-        }
-    
-        menu.animate(menuFramesIn, animOptions);
-    }
+            fill: "forwards"
+        };
 
-    if (validator === -1) {
-        let menuRect = menu.getBoundingClientRect();
+        hidingMenu.animate(menuFramesIn, animOptions);
+
+    } else if (!hidingMenu.classList.contains("hidden")) {
+        let hidingMenuRect = hidingMenu.getBoundingClientRect();
 
         const menuFramesOut = {
-            transform: [`translate(${menuRect.width}px)`],
-            opacity: [1, 0],
+            height: [`${hidingMenuRect.height}px`, 0],
             easing: "ease-in"
         }
 
         const animOptions = {
             duration: 1000,
-            fill: "forwards",
-        }
-        
-        menu.animate(menuFramesOut, animOptions);
+        };
 
-        setTimeout(() => menu.classList.toggle("hidden"), 1000);
-}
-});
-
-const smallScreens = window.matchMedia("(max-width: 810px)");
-let listMenu = document.getElementById("list");
-let menuElems = document.querySelectorAll("#list > li");
-const menuNumber = menuElems.length;
-let noList = true;
-//console.log(menuNumber);
-
-function menuOnMobile() {
-    if (smallScreens.matches && noList) {
-        console.log("Entering if");
-        for (let i = menuElems.length - 2; i >= 0; i--) {
-            menu.firstElementChild.prepend(menuElems[i]);
-        }
-        noList = false;
-        /*menu.style.top = "";
-        menu.style.right = "";
-        menu.style.left = "";
-        menu.style.bottom = "";*/
-    } else if (!smallScreens.matches && !noList) {
-        console.log("Entering else");
-        for (let i = menuNumber - 1; i >= 0; i--) {
-            listMenu.prepend(menuElems[i]);
-        }
-        noList = true;
-        menu.style.width = "fit-content";
+        hidingMenu.animate(menuFramesOut, animOptions);
+        setTimeout( () => hidingMenu.classList.toggle("hidden"), 1000);
     }
 }
-
-menuOnMobile()
-
-window.addEventListener("resize", menuOnMobile);
-
-let container = document.querySelector(".container");
-
-burger.addEventListener("click", () => {
-    if (!smallScreens.matches) return;
-    console.log("Entering small screens listener");
-    validator *= -1;
-
-    let contRect = container.getBoundingClientRect();
-
-    //console.log(contRect.height);
-    if (validator === 1) {
-        menu.classList.toggle("hidden");
-
-        let menuRect = menu.getBoundingClientRect();
-        /*menu.style.right = "1px";*/
-        /*menu.style.top = `${contRect.height}px`;*/
-        menu.style.width = "100vw";
-        //console.log(`Menu height: ${menuRect.height}`);
-
-        const menuFramesIn = {
-            /*
-            transform: [`translateY(${contRect.height}px)`],
-            opacity: [0, 1],
-            */
-            height: [0, `${menuRect.height}px`],
-            easing: "ease-out"
-        }
-
-        const animOptions = {
-            duration: 1000,
-            fill: "forwards",
-        }
-    
-        console.log(`========= Menu height before: ========= ${menuRect.height}`);
-        menu.animate(menuFramesIn, animOptions);
-        console.log(`========= Menu height after: ========= ${menuRect.height}`);
-    }
-
-    if (validator === -1) {
-        let menuRect = menu.getBoundingClientRect();
-        /*menu.style.right = "1px";*/
-        /*menu.style.top = `${contRect.height}px`;*/
-
-        const menuFramesOut = {
-            /*
-            transform: [`translateY(-${menuRect.height + contRect.height}px)`],
-            opacity: [1, 0],
-            */
-            height: [`${menuRect.height}px`, 0],
-            easing: "ease-in"
-        }
-
-        const animOptions = {
-            duration: 1000,
-            /*fill: "forwards",*/
-        }
-        
-        console.log(`========= Menu height before: ========= ${menuRect.height}`);
-        menu.animate(menuFramesOut, animOptions);
-        console.log(`========= Menu height after: ========= ${menuRect.height}`);
-
-        setTimeout(() => menu.classList.toggle("hidden"), 1000);
-}
-});
-
-
-// Debugging.
-burger.addEventListener("click", () => {
-    let menuRect = menu.getBoundingClientRect();
-    console.log(menu);
-    console.log(`Display: ${getComputedStyle(menu).display}\nHeight: ${getComputedStyle(menu).height}\nMenu height: ${menuRect.height}\nRight offset: ${menuRect.right}\nBottom offset: ${menuRect.bottom}\nWidth: ${menuRect.width}`);
-})
